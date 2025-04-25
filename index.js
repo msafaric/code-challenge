@@ -27,6 +27,24 @@ const matrix = [
 //   [' ', ' ', '+', '-', '-', '-', 'D', '-', '-', '+'],
 // ];
 
+export function isUppercaseLetter(letter) {
+  return /^[A-Z]$/.test(letter);
+}
+
+export function isValidCharacter(character) {
+  const possibleCharacter = ['+', '-', '|'];
+  if (
+    (character && isUppercaseLetter(character)) ||
+    (possibleCharacter.includes(character) &&
+      character !== ' ' &&
+      character !== undefined)
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export function checkMatrixValidation(matrix) {
   let atCharacters = [];
   let xCharacters = [];
@@ -63,9 +81,15 @@ export function checkMatrixValidation(matrix) {
   if (xCharacters.length === 0) {
     throw new Error('Invalid input matrix, matrix without x character.');
   }
+
+  if (xCharacters.length > 1) {
+    throw new Error('Invalid input matrix, too many x chacaters.');
+  }
+
+  return true
 }
 
-checkMatrixValidation(matrix);
+console.log("check validation", checkMatrixValidation(matrix))
 
 export function findCharacterPosition(matrix, character) {
   for (let i = 0; i < matrix.length; i++) {
@@ -77,24 +101,6 @@ export function findCharacterPosition(matrix, character) {
     }
   }
   return null;
-}
-
-export function isUppercaseLetter(letter) {
-  return /^[A-Z]$/.test(letter);
-}
-
-export function isValidCharacter(character) {
-  const possibleCharacter = ['+', '-', '|'];
-  if (
-    (character && isUppercaseLetter(character)) ||
-    (possibleCharacter.includes(character) &&
-      character !== ' ' &&
-      character !== undefined)
-  ) {
-    return true;
-  } else {
-    false;
-  }
 }
 
 export function findInitialDirection(matrix, position) {
@@ -122,7 +128,7 @@ export function getOppositeDirection(direction) {
   return opposites[direction];
 }
 
-export function findDirection(matrix, position, currentDirection) {
+export function findDirectionAtIntersection(matrix, position, currentDirection) {
   const directions = {
     up: { row: -1, column: 0 },
     right: { row: 0, column: 1 },
@@ -187,7 +193,7 @@ export function walkingThroughTheMatrix(matrix) {
     }
 
     if (currentChar === '+') {
-      direction = findDirection(matrix, position, direction);
+      direction = findDirectionAtIntersection(matrix, position, direction);
     }
 
     if (currentChar === 'x') {
@@ -208,4 +214,18 @@ export function walkingThroughTheMatrix(matrix) {
   return result;
 }
 
-// walkingThroughTheMatrix(matrix);
+export function getResult(matrix) {
+  try {
+    const isValid = checkMatrixValidation(matrix);
+
+    if (isValid) {
+      const result = walkingThroughTheMatrix(matrix);
+      return result;
+    }
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+
+console.log("done deal", getResult(matrix))
