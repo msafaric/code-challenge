@@ -97,8 +97,6 @@ export function checkMatrixValidation(matrix) {
   return true
 }
 
-console.log("check validation", checkMatrixValidation(matrix))
-
 export function findCharacterPosition(matrix, character) {
   for (let i = 0; i < matrix.length; i++) {
     let row = matrix[i];
@@ -236,4 +234,4 @@ export function getResult(matrix) {
 }
 
 
-console.log("done deal", getResult(matrix))
+
