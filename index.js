@@ -46,6 +46,14 @@ export function isValidCharacter(character) {
 }
 
 export function checkMatrixValidation(matrix) {
+  if (
+    !Array.isArray(matrix) ||
+    matrix.length === 0 ||
+    !matrix.every(row => Array.isArray(row))
+  ) {
+    throw new Error('Invalid input matrix, it must be a 2-dimensional array.');
+  }
+
   let atCharacters = [];
   let xCharacters = [];
 
