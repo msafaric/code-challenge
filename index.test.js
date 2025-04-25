@@ -1,4 +1,4 @@
-import { isUppercaseLetter, walkingThroughTheMatrix } from './index.js';
+import { isUppercaseLetter, walkingThroughTheMatrix, getResult } from './index.js';
 
 describe('isUppercaseLetter', () => {
   test('the function returns true if it is an uppercase letter', () => {
@@ -77,5 +77,51 @@ describe('walkingThroughTheMatrix', () => {
     const result = walkingThroughTheMatrix(matrix);
 
     expect(result).toEqual(expected);
+  });
+});
+
+describe('getResult', () => {
+  test('funtion returns correct result for a valid 2-dimensional matrix', () => {
+    const matrix = [
+      ['@', '-', '-', '-', 'A', '-', '-', '-', '+'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+      ['x', '-', 'B', '-', '+', ' ', ' ', ' ', 'C'],
+      [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+      [' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+    ];
+
+    const expected = {
+      Letters: 'ACB',
+      PathAsCharacters: '@---A---+|C|+---+|+-B-x'
+    };
+
+    expect(getResult(matrix)).toEqual(expected);
+  });
+
+  test('function return error if input is not 2-dimensional matrix', () => {
+    const matrix = [
+      ['@', '-', '-', '-', 'A', '-', '-', '-', '+'],
+      3,
+    ];
+
+    const result = getResult(matrix);
+
+    expect(result).toHaveProperty('error');
+    expect(result.error).toMatch(/must be a 2-dimensional array/i);
+  });
+
+  test('function returns error if matrix is invalid', () => {
+    const matrix = [
+      [' ', '-', '-', '-', 'A', '-', '-', '-', '+'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+      ['x', '-', 'B', '-', '+', ' ', ' ', ' ', 'C'],
+      [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+      [' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+    ];
+
+    const result = getResult(matrix);
+
+    expect(result).toHaveProperty('error');
+    expect(result.error).toMatch(/starting character/);
   });
 });
