@@ -1,13 +1,17 @@
+// const matrix = [
+//   [' ', ' ', ' ', ' ', '+', '-', 'O', '-', 'N', ' ', '+', ' ', ' '],
+//   [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' '],
+//   [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '+', '-', 'I', '-', '+'],
+//   ['@', '-', 'G', '-', 'O', '-', '+', ' ', '|', ' ', '|', ' ', '|'],
+//   [' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '+', '-', '+', ' ', 'E'],
+//   [' ', ' ', ' ', ' ', '+', '-', '+', ' ', ' ', ' ', ' ', ' ', 'S'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+// ];
+
 const matrix = [
-  [' ', ' ', ' ', ' ', '+', '-', 'O', '-', 'N', ' ', '+', ' ', ' '],
-  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' '],
-  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '+', '-', 'I', '-', '+'],
-  ['@', '-', 'G', '-', 'O', '-', '+', ' ', '|', ' ', '|', ' ', '|'],
-  [' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '+', '-', '+', ' ', 'E'],
-  [' ', ' ', ' ', ' ', '+', '-', '+', ' ', ' ', ' ', ' ', ' ', 'S'],
-  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-];
+  ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
+]
 
 export function isUppercaseLetter(letter) {
   return /^[A-Z]$/.test(letter);
@@ -142,7 +146,6 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
     const nextRowPosition = position.row + directions[direction].row;
     const nextColumnPosition = position.column + directions[direction].column;
     const character = matrix[nextRowPosition]?.[nextColumnPosition];
-
     if (isValidCharacter(character)) {
       return direction;
     }
@@ -181,7 +184,12 @@ export function walkingThroughTheMatrix(matrix) {
     }
 
     if (currentChar === '+') {
-      direction = findDirectionAtIntersection(matrix, position, direction);
+      let newDirection = findDirectionAtIntersection(matrix, position, direction)
+      if (direction === newDirection) {
+        throw new Error('Fake turn');
+      } else {
+        direction = newDirection
+      }
     }
 
     if (currentChar === 'x') {
@@ -215,4 +223,4 @@ export function getResult(matrix) {
   }
 }
 
-getResult(matrix)
+console.log(getResult(matrix))
