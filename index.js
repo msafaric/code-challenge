@@ -124,7 +124,7 @@ export function getValidDirections(matrix, position, currentDirection) {
     const nextColumnPosition = position.column + step.column;
     const character = matrix[nextRowPosition]?.[nextColumnPosition];
 
-    if (isValidCharacter(character) || isUppercaseLetter(character)) {
+    if (isValidCharacter(character) || isUppercaseLetter(character) || character === 'x') {
       validDirections.push(direction);
     }
   }
@@ -158,6 +158,10 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
 
   if (validDirections.length === 0) {
     throw new Error('Broken path');
+  }
+
+  if (currentDirection === validDirections[0]) {
+    throw new Error('Fake turn')
   }
 
   if (validDirections.length > 1) {
