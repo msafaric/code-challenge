@@ -10,8 +10,19 @@
 // ];
 
 const matrix = [
-  ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
-]
+  [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', '-', 'B'],
+  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  ['@', '-', '-', '-', '-', 'A', '-', '-', '-', '+'],
+  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  [' ', ' ', ' ', ' ', 'x', '+', ' ', ' ', ' ', 'C'],
+  [' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+  [' ', ' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+];
+
+
+// const matrix = [
+//   ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
+// ]
 
 export function isUppercaseLetter(letter) {
   return /^[A-Z]$/.test(letter);
@@ -76,10 +87,6 @@ export function checkMatrixValidation(matrix) {
     throw new Error('Invalid input matrix, matrix without x character.');
   }
 
-  if (xCharacters.length > 1) {
-    throw new Error('Invalid input matrix, too many x chacaters.');
-  }
-
   return true
 }
 
@@ -128,6 +135,7 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
     left: { row: 0, column: -1 },
   };
 
+  let validDirections = []
   for (const direction in directions) {
     if (direction === getOppositeDirection(currentDirection)) continue;
 
@@ -135,23 +143,16 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
     const nextColumnPosition = position.column + directions[direction].column;
     const character = matrix[nextRowPosition]?.[nextColumnPosition];
 
-    if (isUppercaseLetter(character)) {
-      return direction;
+    if (isValidCharacter(character) || isUppercaseLetter(character)) {
+      validDirections.push(direction);
     }
   }
 
-  for (const direction in directions) {
-    if (direction === getOppositeDirection(currentDirection)) continue;
-
-    const nextRowPosition = position.row + directions[direction].row;
-    const nextColumnPosition = position.column + directions[direction].column;
-    const character = matrix[nextRowPosition]?.[nextColumnPosition];
-    if (isValidCharacter(character)) {
-      return direction;
-    }
+  if (validDirections.length > 1) {
+    throw new Error('Fork in path');
+  } else {
+    return validDirections[0];
   }
-
-  return null;
 }
 
 export function walkingThroughTheMatrix(matrix) {
