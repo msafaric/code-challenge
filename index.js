@@ -1,38 +1,13 @@
-// const matrix = [
-//   [' ', ' ', ' ', ' ', '+', '-', 'O', '-', 'N', ' ', '+', ' ', ' '],
-//   [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' '],
-//   [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '+', '-', 'I', '-', '+'],
-//   ['@', '-', 'G', '-', 'O', '-', '+', ' ', '|', ' ', '|', ' ', '|'],
-//   [' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '+', '-', '+', ' ', 'E'],
-//   [' ', ' ', ' ', ' ', '+', '-', '+', ' ', ' ', ' ', ' ', ' ', 'S'],
-//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-// ];
-
 const matrix = [
-  ['@', '-', '-', '-', 'A', '-', '-', '-', '+'],
-  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-  ['x', '-', 'B', '-', '+', ' ', ' ', ' ', 'C'],
-  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
-  [' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+  [' ', ' ', ' ', ' ', '+', '-', 'O', '-', 'N', ' ', '+', ' ', ' '],
+  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' '],
+  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '+', '-', 'I', '-', '+'],
+  ['@', '-', 'G', '-', 'O', '-', '+', ' ', '|', ' ', '|', ' ', '|'],
+  [' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '+', '-', '+', ' ', 'E'],
+  [' ', ' ', ' ', ' ', '+', '-', '+', ' ', ' ', ' ', ' ', ' ', 'S'],
+  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
 ];
-
-// const matrix = [
-//   ['@', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-//   ['|', ' ', '+', '-', 'C', '-', '-', '+', ' ', ' '],
-//   ['A', ' ', '|', ' ', ' ', ' ', ' ', '|', ' ', ' '],
-//   ['+', '-', '-', '-', 'B', '-', '-', '+', ' ', ' '],
-//   [' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-//   [' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-//   [' ', ' ', '+', '-', '-', '-', 'D', '-', '-', '+'],
-// ];
-
-// const matrix = [
-//   ['@', '-', 'A'],
-//   [' ', ' ', '|'],
-//   [' ', ' ', 'x']
-// ]
-
 
 export function isUppercaseLetter(letter) {
   return /^[A-Z]$/.test(letter);
@@ -43,7 +18,7 @@ export function isValidCharacter(character) {
   if (
     (character && isUppercaseLetter(character)) ||
     (possibleCharacter.includes(character) &&
-      character !== ' ' &&
+      // character !== ' ' &&
       character !== undefined)
   ) {
     return true;
@@ -128,7 +103,7 @@ export function findInitialDirection(matrix, position) {
     let step = possibleDirections[direction];
     let nextRowPosition = position.row + step.row;
     let nextColumnPosition = position.column + step.column;
-    let character = matrix[nextRowPosition].[nextColumnPosition];
+    let character = matrix[nextRowPosition]?.[nextColumnPosition];
 
     if (isValidCharacter(character)) {
       return direction;
@@ -240,6 +215,4 @@ export function getResult(matrix) {
   }
 }
 
-
-
-console.log(getResult(matrix))
+getResult(matrix)
