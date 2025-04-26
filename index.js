@@ -19,12 +19,25 @@ const matrix = [
 //   [' ', ' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
 // ];
 
+// const matrix = [
+//   ["@", "-", "A", "-", "-", "+"],
+//   [" ", " ", " ", " ", " ", "|"],
+//   [" ", " ", " ", " ", " ", "+", "-", "B", "-", "-", "x", "-", "B",]
+// ]
+
 
 // const matrix = [
 //   ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
 // ]
 
 // const matrix = [["x", "-", "B", "-", "@", "-", "A", "-", "x"]]
+
+const possibleDirections = {
+  right: { row: 0, column: 1 },
+  down: { row: 1, column: 0 },
+  left: { row: 0, column: -1 },
+  up: { row: -1, column: 0 },
+};
 
 export function isUppercaseLetter(letter) {
   return /^[A-Z]$/.test(letter);
@@ -78,7 +91,7 @@ export function checkMatrixValidation(matrix) {
   }
 
   if (atCharacters.length > 1) {
-    throw new Error('Invalid input matrix, too many @ chacaters.');
+    throw new Error('Invalid input matrix, too many @ characters.');
   }
 
   if (atCharacters.length === 0) {
@@ -105,13 +118,6 @@ export function findCharacterPosition(matrix, character) {
 }
 
 export function getValidDirections(matrix, position, currentDirection) {
-  const possibleDirections = {
-    right: { row: 0, column: 1 },
-    down: { row: 1, column: 0 },
-    left: { row: 0, column: -1 },
-    up: { row: -1, column: 0 },
-  };
-
   let validDirections = [];
 
   for (const direction in possibleDirections) {
@@ -131,7 +137,6 @@ export function getValidDirections(matrix, position, currentDirection) {
 
   return validDirections;
 }
-
 
 export function findInitialDirection(matrix, position) {
   const validDirections = getValidDirections(matrix, position);
@@ -171,6 +176,29 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
   return validDirections[0];
 }
 
+function findDirectionAtUppercaseLetter(matrix, position, currentDirection) {
+  const step = possibleDirections[currentDirection];
+  const nextCharacter = matrix[position.row + step.row]?.[position.column + step.column];
+
+  if (isValidCharacter(nextCharacter) || isUppercaseLetter(nextCharacter) || nextCharacter === ' ') {
+    return currentDirection;
+  }
+
+  const opposite = getOppositeDirection(currentDirection);
+
+  for (const direction in possibleDirections) {
+    if (direction === currentDirection || direction === opposite) continue;
+
+    const directionChange = possibleDirections[direction];
+    const nextCharacter = matrix[position.row + directionChange.row]?.[position.column + directionChange.column];
+
+    if (isValidCharacter(nextCharacter) || isUppercaseLetter(nextCharacter) || nextCharacter === ' ') {
+      return direction;
+    }
+  }
+
+  throw new Error('No valid directions');
+}
 
 export function walkingThroughTheMatrix(matrix) {
   let position = findCharacterPosition(matrix, '@');
@@ -194,11 +222,12 @@ export function walkingThroughTheMatrix(matrix) {
     stepsProgress.push(currentChar);
 
     const letterWithCoordinates = `${currentChar} ${position.row} ${position.column}`;
-    if (
-      isUppercaseLetter(currentChar) &&
-      !foundLetters.includes(letterWithCoordinates)
-    ) {
+    if (isUppercaseLetter(currentChar) && !foundLetters.includes(letterWithCoordinates)) {
       foundLetters.push(letterWithCoordinates);
+    }
+
+    if (isUppercaseLetter(currentChar)) {
+      direction = findDirectionAtUppercaseLetter(matrix, position, direction);
     }
 
     if (currentChar === '+') {
