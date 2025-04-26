@@ -9,6 +9,23 @@ const matrix = [
   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
 ];
 
+// const matrix = [
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', '-', 'B'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+//   ['@', '-', '-', '-', '-', 'A', '-', '-', '-', '+'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+//   [' ', ' ', ' ', ' ', 'x', '+', ' ', ' ', ' ', 'C'],
+//   [' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+//   [' ', ' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+// ];
+
+
+// const matrix = [
+//   ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
+// ]
+
+// const matrix = [["x", "-", "B", "-", "@", "-", "A", "-", "x"]]
+
 export function isUppercaseLetter(letter) {
   return /^[A-Z]$/.test(letter);
 }
@@ -72,10 +89,6 @@ export function checkMatrixValidation(matrix) {
     throw new Error('Invalid input matrix, matrix without x character.');
   }
 
-  if (xCharacters.length > 1) {
-    throw new Error('Invalid input matrix, too many x chacaters.');
-  }
-
   return true
 }
 
@@ -91,7 +104,7 @@ export function findCharacterPosition(matrix, character) {
   return null;
 }
 
-export function findInitialDirection(matrix, position) {
+export function getValidDirections(matrix, position, currentDirection) {
   const possibleDirections = {
     right: { row: 0, column: 1 },
     down: { row: 1, column: 0 },
@@ -99,16 +112,39 @@ export function findInitialDirection(matrix, position) {
     up: { row: -1, column: 0 },
   };
 
-  for (let direction in possibleDirections) {
-    let step = possibleDirections[direction];
-    let nextRowPosition = position.row + step.row;
-    let nextColumnPosition = position.column + step.column;
-    let character = matrix[nextRowPosition]?.[nextColumnPosition];
+  let validDirections = [];
 
-    if (isValidCharacter(character)) {
-      return direction;
+  for (const direction in possibleDirections) {
+    if (direction === currentDirection) {
+      continue;
+    }
+
+    const step = possibleDirections[direction];
+    const nextRowPosition = position.row + step.row;
+    const nextColumnPosition = position.column + step.column;
+    const character = matrix[nextRowPosition]?.[nextColumnPosition];
+
+    if (isValidCharacter(character) || isUppercaseLetter(character) || character === 'x') {
+      validDirections.push(direction);
     }
   }
+
+  return validDirections;
+}
+
+
+export function findInitialDirection(matrix, position) {
+  const validDirections = getValidDirections(matrix, position);
+
+  if (validDirections.length === 0) {
+    throw new Error('Invalid start direction');
+  }
+
+  if (validDirections.length > 1) {
+    throw new Error('Multiple starting paths');
+  }
+
+  return validDirections[0];
 }
 
 export function getOppositeDirection(direction) {
@@ -117,39 +153,24 @@ export function getOppositeDirection(direction) {
 }
 
 export function findDirectionAtIntersection(matrix, position, currentDirection) {
-  const directions = {
-    up: { row: -1, column: 0 },
-    right: { row: 0, column: 1 },
-    down: { row: 1, column: 0 },
-    left: { row: 0, column: -1 },
-  };
+  const oppositeDirection = getOppositeDirection(currentDirection);
+  const validDirections = getValidDirections(matrix, position, oppositeDirection);
 
-  for (const direction in directions) {
-    if (direction === getOppositeDirection(currentDirection)) continue;
-
-    const nextRowPosition = position.row + directions[direction].row;
-    const nextColumnPosition = position.column + directions[direction].column;
-    const character = matrix[nextRowPosition]?.[nextColumnPosition];
-
-    if (isUppercaseLetter(character)) {
-      return direction;
-    }
+  if (validDirections.length === 0) {
+    throw new Error('Broken path');
   }
 
-  for (const direction in directions) {
-    if (direction === getOppositeDirection(currentDirection)) continue;
-
-    const nextRowPosition = position.row + directions[direction].row;
-    const nextColumnPosition = position.column + directions[direction].column;
-    const character = matrix[nextRowPosition]?.[nextColumnPosition];
-
-    if (isValidCharacter(character)) {
-      return direction;
-    }
+  if (currentDirection === validDirections[0]) {
+    throw new Error('Fake turn')
   }
 
-  return null;
+  if (validDirections.length > 1) {
+    throw new Error('Fork in path');
+  }
+
+  return validDirections[0];
 }
+
 
 export function walkingThroughTheMatrix(matrix) {
   let position = findCharacterPosition(matrix, '@');
@@ -166,7 +187,7 @@ export function walkingThroughTheMatrix(matrix) {
       position.column < 0 ||
       position.column >= matrix[position.row].length
     ) {
-      break;
+      throw new Error('Broken path');
     }
 
     const currentChar = matrix[position.row][position.column];
@@ -181,7 +202,7 @@ export function walkingThroughTheMatrix(matrix) {
     }
 
     if (currentChar === '+') {
-      direction = findDirectionAtIntersection(matrix, position, direction);
+      direction = findDirectionAtIntersection(matrix, position, direction)
     }
 
     if (currentChar === 'x') {
@@ -215,4 +236,8 @@ export function getResult(matrix) {
   }
 }
 
-getResult(matrix)
+console.log(getResult(matrix))
+
+
+
+
