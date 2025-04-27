@@ -1,4 +1,4 @@
-import { isUppercaseLetter, walkingThroughTheMatrix, getResult } from './index.js';
+import { isUppercaseLetter, walkingThroughTheMatrix, getMatrixPath } from './index.js';
 
 describe('isUppercaseLetter', () => {
   test('the function returns true if it is an uppercase letter', () => {
@@ -46,8 +46,8 @@ describe('walkingThroughTheMatrix', () => {
     ];
 
     const expected = {
-      Letters: 'ABCD',
-      PathAsCharacters: '@|A+---B--+|+--C-+|-||+---D--+|x'
+      letters: 'ABCD',
+      pathAsCharacters: '@|A+---B--+|+--C-+|-||+---D--+|x'
     };
 
     const result = walkingThroughTheMatrix(matrix);
@@ -55,6 +55,26 @@ describe('walkingThroughTheMatrix', () => {
     expect(result).toEqual(expected);
   });
 });
+
+// describe('walkingThroughTheMatrix', () => {
+//   test('walkingThroughTheMatrix function returns correct letters and correct walking distance', () => {
+//     const matrix = [
+//       [' ', '+', '-', 'L', '-', '+'],
+//       [' ', '|', ' ', ' ', '+', 'A', '-', '+'],
+//       ['@', 'B', '+', ' ', '+', '+', ' ', 'H'],
+//       [' ', '+', '+', ' ', ' ', ' ', ' ', 'x'],
+//     ];
+
+//     const expected = {
+//       letters: 'BLAH',
+//       pathAsCharacters: '@B+++B|+-L-+A+++A-+Hx'
+//     };
+
+//     const result = walkingThroughTheMatrix(matrix);
+
+//     expect(result).toEqual(expected);
+//   });
+// });
 
 describe('walkingThroughTheMatrix', () => {
   test('walkingThroughTheMatrix function returns correct letters and correct walking distance', () => {
@@ -70,8 +90,8 @@ describe('walkingThroughTheMatrix', () => {
     ];
 
     const expected = {
-      Letters: 'GOONIES',
-      PathAsCharacters: '@-G-O-+|+-+|O||+-O-N +|I|+-+|+-I-+|ES|x'
+      letters: 'GOONIES',
+      pathAsCharacters: '@-G-O-+|+-+|O||+-O-N +|I|+-+|+-I-+|ES|x'
     };
 
     const result = walkingThroughTheMatrix(matrix);
@@ -80,7 +100,7 @@ describe('walkingThroughTheMatrix', () => {
   });
 });
 
-describe('getResult', () => {
+describe('getMatrixPath', () => {
   test('funtion returns correct result for a valid 2-dimensional matrix', () => {
     const matrix = [
       ['@', '-', '-', '-', 'A', '-', '-', '-', '+'],
@@ -91,11 +111,11 @@ describe('getResult', () => {
     ];
 
     const expected = {
-      Letters: 'ACB',
-      PathAsCharacters: '@---A---+|C|+---+|+-B-x'
+      letters: 'ACB',
+      pathAsCharacters: '@---A---+|C|+---+|+-B-x'
     };
 
-    expect(getResult(matrix)).toEqual(expected);
+    expect(getMatrixPath(matrix)).toEqual(expected);
   });
 
   test('function return error if input is not 2-dimensional matrix', () => {
@@ -104,13 +124,13 @@ describe('getResult', () => {
       3,
     ];
 
-    const result = getResult(matrix);
+    const result = getMatrixPath(matrix);
 
     expect(result).toHaveProperty('error');
-    expect(result.error).toMatch(/must be a 2-dimensional array/i);
+    expect(result.error).toMatch(/must be a 2-dimensional array/);
   });
 
-  test('function returns error if matrix is invalid', () => {
+  test('function returns an error if the matrix does not have a starting position', () => {
     const matrix = [
       [' ', '-', '-', '-', 'A', '-', '-', '-', '+'],
       [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
@@ -119,9 +139,9 @@ describe('getResult', () => {
       [' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
     ];
 
-    const result = getResult(matrix);
+    const result = getMatrixPath(matrix);
 
     expect(result).toHaveProperty('error');
-    expect(result.error).toMatch(/starting character/);
+    expect(result.error).toMatch(/without starting character/);
   });
 });

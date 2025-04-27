@@ -1,12 +1,19 @@
+// const matrix = [
+//   [' ', ' ', ' ', ' ', '+', '-', 'O', '-', 'N', ' ', '+', ' ', ' '],
+//   [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' '],
+//   [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '+', '-', 'I', '-', '+'],
+//   ['@', '-', 'G', '-', 'O', '-', '+', ' ', '|', ' ', '|', ' ', '|'],
+//   [' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '+', '-', '+', ' ', 'E'],
+//   [' ', ' ', ' ', ' ', '+', '-', '+', ' ', ' ', ' ', ' ', ' ', 'S'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+//   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+// ];
+
 const matrix = [
-  [' ', ' ', ' ', ' ', '+', '-', 'O', '-', 'N', ' ', '+', ' ', ' '],
-  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', ' ', ' ', '|', ' ', ' '],
-  [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '+', '-', 'I', '-', '+'],
-  ['@', '-', 'G', '-', 'O', '-', '+', ' ', '|', ' ', '|', ' ', '|'],
-  [' ', ' ', ' ', ' ', '|', ' ', '|', ' ', '+', '-', '+', ' ', 'E'],
-  [' ', ' ', ' ', ' ', '+', '-', '+', ' ', ' ', ' ', ' ', ' ', 'S'],
-  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-  [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+  [' ', '+', '-', 'L', '-', '+'],
+  [' ', '|', ' ', ' ', '+', 'A', '-', '+'],
+  ['@', 'B', '+', ' ', '+', '+', ' ', 'H'],
+  [' ', '+', '+', ' ', ' ', ' ', ' ', 'x'],
 ];
 
 // const matrix = [
@@ -44,11 +51,10 @@ export function isUppercaseLetter(letter) {
 }
 
 export function isValidCharacter(character) {
-  const possibleCharacter = ['+', '-', '|'];
+  const possibleCharacters = ['+', '-', '|'];
   if (
     (character && isUppercaseLetter(character)) ||
-    (possibleCharacter.includes(character) &&
-      // character !== ' ' &&
+    (possibleCharacters.includes(character) &&
       character !== undefined)
   ) {
     return true;
@@ -57,7 +63,7 @@ export function isValidCharacter(character) {
   }
 }
 
-export function checkMatrixValidation(matrix) {
+export function validateMatrix(matrix) {
   if (
     !Array.isArray(matrix) ||
     matrix.length === 0 ||
@@ -165,12 +171,14 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
     throw new Error('Broken path');
   }
 
-  if (currentDirection === validDirections[0]) {
-    throw new Error('Fake turn')
-  }
+  if (matrix.length === 1) {
+    if (currentDirection === validDirections[0]) {
+      throw new Error('Fake turn')
+    }
 
-  if (validDirections.length > 1) {
-    throw new Error('Fork in path');
+    if (validDirections.length > 1) {
+      throw new Error('Fork in path');
+    }
   }
 
   return validDirections[0];
@@ -245,16 +253,16 @@ export function walkingThroughTheMatrix(matrix) {
   }
 
   const result = {
-    Letters: foundLetters.map((element) => element[0]).join(''),
-    PathAsCharacters: stepsProgress.join(''),
+    letters: foundLetters.map((element) => element[0]).join(''),
+    pathAsCharacters: stepsProgress.join(''),
   };
 
   return result;
 }
 
-export function getResult(matrix) {
+export function getMatrixPath(matrix) {
   try {
-    const isValid = checkMatrixValidation(matrix);
+    const isValid = validateMatrix(matrix);
 
     if (isValid) {
       const result = walkingThroughTheMatrix(matrix);
@@ -265,7 +273,7 @@ export function getResult(matrix) {
   }
 }
 
-console.log(getResult(matrix))
+console.log(getMatrixPath(matrix))
 
 
 
