@@ -123,6 +123,13 @@ export function findCharacterPosition(matrix, character) {
   return null;
 }
 
+export function getNextCharacter(matrix, position, direction) {
+  const step = possibleDirections[direction];
+  const nextRowPosition = position.row + step.row;
+  const nextColumnPosition = position.column + step.column;
+  return matrix[nextRowPosition]?.[nextColumnPosition];
+}
+
 export function getValidDirections(matrix, position, currentDirection) {
   let validDirections = [];
 
@@ -131,18 +138,16 @@ export function getValidDirections(matrix, position, currentDirection) {
       continue;
     }
 
-    const step = possibleDirections[direction];
-    const nextRowPosition = position.row + step.row;
-    const nextColumnPosition = position.column + step.column;
-    const character = matrix[nextRowPosition]?.[nextColumnPosition];
+    const character = getNextCharacter(matrix, position, direction);
 
-    if (isValidCharacter(character) || isUppercaseLetter(character) || character === 'x') {
+    if (isValidCharacter(character) || isUppercaseLetter(character) || character === "x") {
       validDirections.push(direction);
     }
   }
 
   return validDirections;
 }
+
 
 export function findInitialDirection(matrix, position) {
   const validDirections = getValidDirections(matrix, position);
@@ -171,22 +176,28 @@ export function findDirectionAtIntersection(matrix, position, currentDirection) 
     throw new Error('Broken path');
   }
 
-  if (matrix.length === 1) {
-    if (currentDirection === validDirections[0]) {
-      throw new Error('Fake turn')
-    }
-
-    if (validDirections.length > 1) {
+  if (validDirections.length > 1) {
+    const firstSide = getNextCharacter(matrix, position, validDirections[0])
+    const secondSide = getNextCharacter(matrix, position, validDirections[1])
+    if (firstSide === secondSide) {
       throw new Error('Fork in path');
     }
+  }
+
+  if (currentDirection === validDirections[0]) {
+    throw new Error('Fake turn');
   }
 
   return validDirections[0];
 }
 
-function findDirectionAtUppercaseLetter(matrix, position, currentDirection) {
+export function findDirectionAtUppercaseLetter(matrix, position, currentDirection) {
   const step = possibleDirections[currentDirection];
-  const nextCharacter = matrix[position.row + step.row]?.[position.column + step.column];
+  let nextCharacter = matrix[position.row + step.row]?.[position.column + step.column];
+
+  if (nextCharacter === 'x') {
+    return currentDirection;
+  }
 
   if (isValidCharacter(nextCharacter) || isUppercaseLetter(nextCharacter) || nextCharacter === ' ') {
     return currentDirection;
@@ -198,7 +209,11 @@ function findDirectionAtUppercaseLetter(matrix, position, currentDirection) {
     if (direction === currentDirection || direction === opposite) continue;
 
     const directionChange = possibleDirections[direction];
-    const nextCharacter = matrix[position.row + directionChange.row]?.[position.column + directionChange.column];
+    nextCharacter = matrix[position.row + directionChange.row]?.[position.column + directionChange.column];
+
+    if (nextCharacter === 'x') {
+      return direction;
+    }
 
     if (isValidCharacter(nextCharacter) || isUppercaseLetter(nextCharacter) || nextCharacter === ' ') {
       return direction;
@@ -207,6 +222,7 @@ function findDirectionAtUppercaseLetter(matrix, position, currentDirection) {
 
   throw new Error('No valid directions');
 }
+
 
 export function walkingThroughTheMatrix(matrix) {
   let position = findCharacterPosition(matrix, '@');
@@ -223,17 +239,15 @@ export function walkingThroughTheMatrix(matrix) {
       position.column < 0 ||
       position.column >= matrix[position.row].length
     ) {
-      throw new Error('Broken path');
+      break
     }
 
     const currentChar = matrix[position.row][position.column];
     stepsProgress.push(currentChar);
-
     const letterWithCoordinates = `${currentChar} ${position.row} ${position.column}`;
     if (isUppercaseLetter(currentChar) && !foundLetters.includes(letterWithCoordinates)) {
       foundLetters.push(letterWithCoordinates);
     }
-
     if (isUppercaseLetter(currentChar)) {
       direction = findDirectionAtUppercaseLetter(matrix, position, direction);
     }

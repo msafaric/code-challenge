@@ -56,25 +56,25 @@ describe('walkingThroughTheMatrix', () => {
   });
 });
 
-// describe('walkingThroughTheMatrix', () => {
-//   test('walkingThroughTheMatrix function returns correct letters and correct walking distance', () => {
-//     const matrix = [
-//       [' ', '+', '-', 'L', '-', '+'],
-//       [' ', '|', ' ', ' ', '+', 'A', '-', '+'],
-//       ['@', 'B', '+', ' ', '+', '+', ' ', 'H'],
-//       [' ', '+', '+', ' ', ' ', ' ', ' ', 'x'],
-//     ];
+describe('walkingThroughTheMatrix', () => {
+  test('walkingThroughTheMatrix function returns correct letters and correct walking distance', () => {
+    const matrix = [
+      [' ', '+', '-', 'L', '-', '+'],
+      [' ', '|', ' ', ' ', '+', 'A', '-', '+'],
+      ['@', 'B', '+', ' ', '+', '+', ' ', 'H'],
+      [' ', '+', '+', ' ', ' ', ' ', ' ', 'x'],
+    ];
 
-//     const expected = {
-//       letters: 'BLAH',
-//       pathAsCharacters: '@B+++B|+-L-+A+++A-+Hx'
-//     };
+    const expected = {
+      letters: 'BLAH',
+      pathAsCharacters: '@B+++B|+-L-+A+++A-+Hx'
+    };
 
-//     const result = walkingThroughTheMatrix(matrix);
+    const result = walkingThroughTheMatrix(matrix);
 
-//     expect(result).toEqual(expected);
-//   });
-// });
+    expect(result).toEqual(expected);
+  });
+});
 
 describe('walkingThroughTheMatrix', () => {
   test('walkingThroughTheMatrix function returns correct letters and correct walking distance', () => {
