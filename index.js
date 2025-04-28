@@ -51,11 +51,11 @@
 // ]
 
 
-// const matrix = [
-//   ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
-// ]
+const matrix = [
+  ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
+]
 
-const matrix = [["x", "-", "B", "-", "@", "-", "A", "-", "x"]]
+// const matrix = [["x", "-", "B", "-", "@", "-", "A", "-", "x"]]
 
 const possibleDirections = {
   right: { row: 0, column: 1 },

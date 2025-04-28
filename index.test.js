@@ -1,4 +1,4 @@
-import { isUppercaseLetter, walkingThroughTheMatrix, validateMatrix, getMatrixPath } from './index.js';
+import { isUppercaseLetter, walkingThroughTheMatrix, validateMatrix, getMatrixPath, findDirectionAtIntersection } from './index.js';
 
 describe('isUppercaseLetter', () => {
   test('the function returns true if it is an uppercase letter', () => {
@@ -153,7 +153,6 @@ describe('validateMatrix', () => {
   });
 });
 
-
 describe('getMatrixPath', () => {
   test('funtion returns correct result for a valid 2-dimensional matrix', () => {
     const matrix = [
@@ -172,6 +171,25 @@ describe('getMatrixPath', () => {
     expect(getMatrixPath(matrix)).toEqual(expected);
   });
 
+  test('function returns an error if matrix detected fork in the path', () => {
+    const matrix = [
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x', '-', 'B'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+      ['@', '-', '-', '-', '-', 'A', '-', '-', '-', '+'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+      [' ', ' ', ' ', ' ', 'x', '+', ' ', ' ', ' ', 'C'],
+      [' ', ' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+      [' ', ' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+    ];
+
+    const result = getMatrixPath(matrix);
+
+    expect(result).toHaveProperty('error');
+    expect(result.error).toBe('Fork in path');
+    // expect(result.error).toMatch(/fork in path/i);
+  });
+
+
   test('function return error if input is not 2-dimensional matrix', () => {
     const matrix = [
       ['@', '-', '-', '-', 'A', '-', '-', '-', '+'],
@@ -181,7 +199,7 @@ describe('getMatrixPath', () => {
     const result = getMatrixPath(matrix);
 
     expect(result).toHaveProperty('error');
-    expect(result.error).toMatch(/must be a 2-dimensional array/);
+    expect(result.error).toMatch(/must be a 2-dimensional array/i);
   });
 
   test('function returns an error if the matrix does not have a starting position', () => {
@@ -198,4 +216,28 @@ describe('getMatrixPath', () => {
     expect(result).toHaveProperty('error');
     expect(result.error).toMatch(/without starting character/);
   });
+
+
+  test('funtion returns correct result - object of collected letters and the correct traveled path', () => {
+    const matrix = [
+      ["@", "-", "A", "-", "-", "+"],
+      [" ", " ", " ", " ", " ", "|"],
+      [" ", " ", " ", " ", " ", "+", "-", "B", "-", "-", "x", "-", "C", "-", "-", "D"]
+    ]
+    const result = getMatrixPath(matrix);
+    expect(result.letters).toBe('AB');
+    expect(result.pathAsCharacters).toBe('@-A--+|+-B--x');
+  });
+
+
+  test('funtion returns an error for invalid input matrix - fake turn case', () => {
+    const matrix = [
+      ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
+    ]
+
+    const result = getMatrixPath(matrix);
+    expect(result).toHaveProperty('error');
+    expect(result.error).toBe('Fake turn');
+  });
+
 });
