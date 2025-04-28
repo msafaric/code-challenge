@@ -1,4 +1,4 @@
-import { isUppercaseLetter, walkingThroughTheMatrix, validateMatrix, getMatrixPath } from './index.js';
+import { isUppercaseLetter, isValidCharacter, validateMatrix, getNextCharacter, findDirectionAtIntersection, findDirectionAtUppercaseLetter, walkingThroughTheMatrix, getMatrixPath } from './index.js';
 
 describe('isUppercaseLetter', () => {
   test('the function returns true if it is an uppercase letter', () => {
@@ -31,6 +31,76 @@ describe('isUppercaseLetter', () => {
     expect(isUppercaseLetter('Đ')).toBe(false);
   });
 });
+
+describe('isValidCharacter', () => {
+  test('function returns true for valid input character', () => {
+    expect(isValidCharacter('+')).toBe(true);
+    expect(isValidCharacter('-')).toBe(true);
+    expect(isValidCharacter('|')).toBe(true);
+    expect(isValidCharacter('B')).toBe(true);
+    expect(isValidCharacter('G')).toBe(true);
+  });
+
+  test('function returns for for invalid input character', () => {
+    expect(isValidCharacter(' ')).toBe(false);
+    expect(isValidCharacter('x')).toBe(false);
+    expect(isValidCharacter('@')).toBe(false);
+  });
+});
+
+describe('validateMatrix', () => {
+  it('function returns an error if starting character "@" is missing', () => {
+    const matrix = [
+      [' ', ' ', ' ', '-', 'A', '-', '-', '-', '+'],
+      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
+      ['x', '-', 'B', '-', '+', ' ', ' ', ' ', 'C'],
+      [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
+      [' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
+    ];
+
+    expect(() => validateMatrix(matrix)).toThrow('Invalid input matrix, matrix without starting character.');
+  });
+});
+
+describe('findDirectionAtIntersection', () => {
+  test('function returns an error if matrix has broken path', () => {
+    const matrix = [
+      ['@', '-', '+'],
+      [' '],
+      ['-', '-', 'x'],
+    ];
+    const position = { row: 0, column: 2 };
+    expect(() => findDirectionAtIntersection(matrix, position, 'right')).toThrow('Broken path');
+  });
+});
+
+describe('findDirectionAtUppercaseLetter', () => {
+  test('function changes direction if it cannot continue in the current direction', () => {
+    const matrix = [
+      ['@', '-', 'C'],
+      ['G', ' ', '|', ' '],
+      ['-', 'F', 'x'],
+    ];
+    const direction = 'right';
+    const position = { row: 0, column: 2 };
+    expect(findDirectionAtUppercaseLetter(matrix, position, direction)).toBe('down');
+  });
+});
+
+describe('getNextCharacter', () => {
+  test('function returns correct character based on the input direction', () => {
+    const matrix = [
+      ['|', 'C'],
+      ['@', '-', '+'],
+      ['|', 'D'],
+      ['x', '-'],
+    ];
+    const position = { row: 1, column: 0 };
+    expect(getNextCharacter(matrix, position, 'right')).toBe('-');
+    expect(getNextCharacter(matrix, position, 'down')).toBe('|');
+  });
+});
+
 
 describe('walkingThroughTheMatrix', () => {
   test('walkingThroughTheMatrix function returns correct letters and correct walking distance', () => {
@@ -139,20 +209,6 @@ describe('walkingThroughTheMatrix', () => {
   });
 });
 
-describe('validateMatrix', () => {
-  it('function returns an error if starting character "@" is missing', () => {
-    const matrix = [
-      [' ', ' ', ' ', '-', 'A', '-', '-', '-', '+'],
-      [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '|'],
-      ['x', '-', 'B', '-', '+', ' ', ' ', ' ', 'C'],
-      [' ', ' ', ' ', ' ', '|', ' ', ' ', ' ', '|'],
-      [' ', ' ', ' ', ' ', '+', '-', '-', '-', '+'],
-    ];
-
-    expect(() => validateMatrix(matrix)).toThrow('Invalid input matrix, matrix without starting character.');
-  });
-});
-
 describe('getMatrixPath', () => {
   test('funtion returns correct result for a valid 2-dimensional matrix', () => {
     const matrix = [
@@ -216,7 +272,6 @@ describe('getMatrixPath', () => {
     expect(result.error).toMatch(/without starting character/);
   });
 
-
   test('funtion returns correct result - object of collected letters and the correct traveled path', () => {
     const matrix = [
       ["@", "-", "A", "-", "-", "+"],
@@ -229,14 +284,10 @@ describe('getMatrixPath', () => {
   });
 
 
-  test('funtion returns an error for invalid input matrix - fake turn case', () => {
-    const matrix = [
-      ["@", "-", "A", "-", "+", "-", "B", "-", "x"],
-    ]
-
+  test('function returns an error for invalid input matrix - fake turn case', () => {
+    const matrix = [["@", "-", "A", "-", "+", "-", "B", "-", "x"],]
     const result = getMatrixPath(matrix);
     expect(result).toHaveProperty('error');
     expect(result.error).toBe('Fake turn');
   });
-
 });
