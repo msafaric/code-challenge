@@ -1,4 +1,4 @@
-import { isUppercaseLetter, walkingThroughTheMatrix, validateMatrix, getMatrixPath, findDirectionAtIntersection } from './index.js';
+import { isUppercaseLetter, walkingThroughTheMatrix, validateMatrix, getMatrixPath } from './index.js';
 
 describe('isUppercaseLetter', () => {
   test('the function returns true if it is an uppercase letter', () => {
@@ -186,7 +186,6 @@ describe('getMatrixPath', () => {
 
     expect(result).toHaveProperty('error');
     expect(result.error).toBe('Fork in path');
-    // expect(result.error).toMatch(/fork in path/i);
   });
 
 
